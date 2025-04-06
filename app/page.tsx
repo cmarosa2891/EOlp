@@ -17,8 +17,8 @@ export default function Home() {
 
   const topicsData = [
     {
-      title: "Ansiedad",
-      description: "Si la ansiedad y los ataques de pánico dificultan tu día a día, en el espacio terapéutico exploraremos las raíces de estas emociones desde una perspectiva psicoanalítica, integrando herramientas de la psicología de la tercera ola. Buscaremos estrategias de manejo y bienestar emocional.",
+      title: "Angustia",
+      description: "Si te resulta difícil manejar la preocupación excesiva y experimentas momentos de gran malestar que interrumpen tu día a día, en el espacio terapéutico exploraremos las fuentes de estas emociones desde una perspectiva psicoanalítica, integrando herramientas de la psicología de la tercera ola. Buscaremos formas de encontrar mayor paz interior y bienestar emocional.",
     },
     {
       title: "Depresión",
