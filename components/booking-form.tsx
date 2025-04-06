@@ -296,7 +296,7 @@ export default function BookingForm() {
               render={({ field }) => (
                 <FormItem>
                  <FormLabel className="text-base">Días y horarios de atención</FormLabel>
-                  <p className="text-sm text-muted-foreground">Selecciona una o varias opciones de acuerdo a tu conveniencia</p>
+                  <p className="text-sm text-muted-foreground">Desplaza la tabla y selecciona una o varias opciones, para coordinar día y horario de atención de acuerdo a tu conveniencia</p>
                   <FormMessage />
                   <div className="overflow-x-auto mt-2">
                     <Table className="border border-primary/20 rounded-md">
@@ -338,7 +338,7 @@ export default function BookingForm() {
                       </TableBody>
                     </Table>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">Selecciona uno o más horarios de tu preferencia.</p>
+                  <p className="text-xs text-muted-foreground mt-2">Para coordinar un horario, por favor, indica tu disponibilidad seleccionando más de una opción.</p>
                 </FormItem>
               )}
             />
