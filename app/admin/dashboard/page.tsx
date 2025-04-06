@@ -106,9 +106,12 @@ export default function AdminDashboard() {
                             <SelectValue placeholder="Tipo de consulta" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="online">Consulta Online</SelectItem>
-                            <SelectItem value="presencial">Consulta Presencial</SelectItem>
-                          </SelectContent>
+  <SelectItem value="online">Consulta Online</SelectItem>
+  <SelectItem value="presencial" disabled>Consulta Presencial</SelectItem>
+  <p className="text-xs text-muted-foreground">
+    (momentaneamente no disponible)
+  </p>
+</SelectContent>
                         </Select>
                       </div>
 

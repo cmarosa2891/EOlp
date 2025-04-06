@@ -26,6 +26,7 @@ export default function RootLayout({
           {children}
           <Toaster />
         </ThemeProvider>
+        <script async src="//www.instagram.com/embed.js"></script>
       </body>
     </html>
   )

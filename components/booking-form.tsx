@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { Calendar } from "@/components/ui/calendar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,13 +10,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { addDays, format } from "date-fns"
-import { es } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
 import { toast } from "@/components/ui/use-toast"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
+// Actualizar el esquema de validación para manejar selecciones de horarios
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "El nombre debe tener al menos 2 caracteres.",
@@ -28,19 +25,112 @@ const formSchema = z.object({
   phone: z.string().min(8, {
     message: "Por favor ingresa un número de teléfono válido.",
   }),
-  reason: z.string().min(10, {
+  reason: z.string().min(5, {
     message: "Por favor describe brevemente el motivo de consulta (mínimo 10 caracteres).",
   }),
-  date: z.date({
-    required_error: "Por favor selecciona una fecha.",
-  }),
-  time: z.string({
-    required_error: "Por favor selecciona un horario.",
+  selectedTimeSlots: z.array(z.string()).min(1, {
+    message: "Por favor selecciona al menos un horario.",
   }),
   type: z.enum(["online", "presencial"], {
     required_error: "Por favor selecciona el tipo de consulta.",
   }),
 })
+
+// Definir los días y horarios disponibles
+const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
+const timeSlots = [
+  "07:00",
+  "08:00",
+  "09:00",
+  "13:30",
+  "14:30",
+  "15:30",
+  "16:30",
+  "17:30",
+  "18:30",
+  "19:30",
+  "20:30",
+  "21:30",
+]
+
+// Matriz de disponibilidad según las condiciones especificadas
+const availabilityMatrix = {
+  Lunes: {
+    "07:00": true,
+    "08:00": true,
+    "09:00": true,
+    "13:30": false,
+    "14:30": false,
+    "15:30": false,
+    "16:30": false,
+    "17:30": false,
+    "18:30": false,
+    "19:30": true,
+    "20:30": true,
+    "21:30": true,
+  },
+  Martes: {
+    "07:00": true,
+    "08:00": true,
+    "09:00": true,
+    "13:30": true,
+    "14:30": true,
+    "15:30": true,
+    "16:30": true,
+    "17:30": true,
+    "18:30": true,
+    "19:30": true,
+    "20:30": true,
+    "21:30": false,
+  },
+  Miércoles: {
+    "07:00": true,
+    "08:00": true,
+    "09:00": true,
+    "13:30": false,
+    "14:30": false,
+    "15:30": false,
+    "16:30": false,
+    "17:30": false,
+    "18:30": false,
+    "19:30": true,
+    "20:30": true,
+    "21:30": true,
+  },
+  Jueves: {
+    "07:00": true,
+    "08:00": true,
+    "09:00": true,
+    "13:30": false,
+    "14:30": false,
+    "15:30": false,
+    "16:30": false,
+    "17:30": false,
+    "18:30": false,
+    "19:30": false,
+    "20:30": false,
+    "21:30": false,
+  },
+  Viernes: {
+    "07:00": false,
+    "08:00": false,
+    "09:00": false,
+    "13:30": false,
+    "14:30": false,
+    "15:30": false,
+    "16:30": false,
+    "17:30": false,
+    "18:30": false,
+    "19:30": false,
+    "20:30": false,
+    "21:30": false,
+  },
+}
+
+// Función para formatear el horario para mostrar en la tabla
+function formatTimeForDisplay(time: string) {
+  return time
+}
 
 export default function BookingForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -52,40 +142,41 @@ export default function BookingForm() {
       email: "",
       phone: "",
       reason: "",
+      selectedTimeSlots: [],
       type: "online",
     },
   })
 
-  const availableTimes = ["09:00", "10:00", "11:00", "15:00", "16:00", "17:00", "18:00"]
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
 
-    // Prepare message for WhatsApp/Telegram
-    const message = encodeURIComponent(
-      `*Nueva solicitud de turno*\n\n` +
-        `*Nombre:* ${values.name}\n` +
-        `*Email:* ${values.email}\n` +
-        `*Teléfono:* ${values.phone}\n` +
-        `*Motivo:* ${values.reason}\n` +
-        `*Fecha:* ${format(values.date, "PPP", { locale: es })}\n` +
-        `*Hora:* ${values.time}\n` +
-        `*Tipo:* ${values.type === "online" ? "Consulta Online" : "Consulta Presencial"}`,
-    )
+    // Convertir los slots seleccionados a un formato legible
+    const selectedSlots = values.selectedTimeSlots.map((slot) => {
+      const [day, time] = slot.split("|")
+      return `${day} a las ${time}`
+    })
 
-    // Here you would typically use an API to send the WhatsApp/Telegram message
-    // For this example, we'll just open WhatsApp with the message
-    // In a production environment, you would use the WhatsApp Business API or Telegram Bot API
-    // API-KEY INTEGRATION POINT: You would need to add your WhatsApp Business API or Telegram Bot API credentials here
+    // Prepare message for WhatsApp
+    const message = encodeURIComponent(
+      `*Nueva Solicitud de Turno - ${values.type === "online" ? "Consulta Online" : "Consulta Presencial"}*\n\n` +
+         `Me gustaría solicitar un turno para una consulta. A continuación, detallo la información requerida:\n\n` +
+      `     *Nombre completo:* ${values.name}\n` +
+      `     *Correo electrónico:* ${values.email}\n` +
+      `     *Número de teléfono:* +54 9 ${values.phone}  *\n\n` +
+      `     *Motivo de la consulta:* ${values.reason}\n` +
+      `     *Horarios de preferencia seleccionados:* ${selectedSlots.map(slot => `  - ${slot}`).join("\n")}\n` +
+      `     *Tipo de consulta:* ${values.type === "online" ? "Consulta Online" : "Consulta Presencial"}\n\n` +
+      `Agradecería que pudieran informarme sobre la disponibilidad para confirmar el turno y los próximos pasos a seguir.\n\n` +
+      `Atentamente,\n\n` +
+      `${values.name}`
+    );
 
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false)
 
       // Open WhatsApp with the message
-      window.open(`https://wa.me/+yourphonenumber?text=${message}`, "_blank")
-
-      // Enviar mensaje por WhatsApp
+      window.open(`https://wa.me/+3489683697?text=${message}`, "_blank")
 
       toast({
         title: "Solicitud enviada",
@@ -188,7 +279,10 @@ export default function BookingForm() {
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="online">Consulta Online</SelectItem>
-                      <SelectItem value="presencial">Consulta Presencial</SelectItem>
+                      <SelectItem value="presencial" disabled>Consulta Presencial</SelectItem>
+                      <p className="text-xs text-muted-foreground">
+                        (momentaneamente no disponible)
+                      </p>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -196,75 +290,58 @@ export default function BookingForm() {
               )}
             />
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fecha</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full h-10 pl-3 text-left font-normal border-primary/20 focus-visible:ring-primary/30",
-                              !field.value && "text-muted-foreground",
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP", { locale: es })
-                            ) : (
-                              <span>Selecciona una fecha</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < addDays(new Date(), 1) || date.getDay() === 0 || date.getDay() === 6
-                          }
-                          initialFocus
-                          locale={es}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Horario</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="h-10 border-primary/20 focus-visible:ring-primary/30">
-                          <SelectValue placeholder="Selecciona un horario" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {availableTimes.map((time) => (
-                          <SelectItem key={time} value={time}>
-                            {time}
-                          </SelectItem>
+            <FormField
+              control={form.control}
+              name="selectedTimeSlots"
+              render={({ field }) => (
+                <FormItem>
+                 <FormLabel className="text-base">Días y horarios de atención</FormLabel>
+                  <p className="text-sm text-muted-foreground">Selecciona una o varias opciones de acuerdo a tu conveniencia</p>
+                  <FormMessage />
+                  <div className="overflow-x-auto mt-2">
+                    <Table className="border border-primary/20 rounded-md">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="font-medium text-center bg-primary/10">Día / Hora</TableHead>
+                          {timeSlots.map((time) => (
+                            <TableHead key={time} className="font-medium text-center bg-primary/10">
+                              {formatTimeForDisplay(time)}
+                            </TableHead>
+                          ))}
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {days.map((day) => (
+                          <TableRow key={day}>
+                            <TableCell className="font-medium bg-primary/5">{day}</TableCell>
+                            {timeSlots.map((time) => (
+                              <TableCell key={`${day}-${time}`} className="text-center p-0">
+                                {availabilityMatrix[day][time] ? (
+                                  <div className="flex items-center justify-center p-2">
+                                    <Checkbox
+                                      id={`${day}|${time}`}
+                                      checked={field.value?.includes(`${day}|${time}`)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...field.value, `${day}|${time}`])
+                                          : field.onChange(field.value?.filter((value) => value !== `${day}|${time}`))
+                                      }}
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="p-2 text-muted-foreground">-</div>
+                                )}
+                              </TableCell>
+                            ))}
+                          </TableRow>
                         ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">Selecciona uno o más horarios de tu preferencia.</p>
+                </FormItem>
+              )}
+            />
 
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
               {isSubmitting ? "Enviando..." : "Solicitar Turno"}

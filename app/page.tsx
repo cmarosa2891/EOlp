@@ -1,3 +1,5 @@
+"use client"; // This directive tells Next.js to render this component on the client-side
+
 import { Instagram, Send } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -6,27 +8,71 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import BookingForm from "@/components/booking-form"
 import StaticInstagramFeed from "@/components/static-instagram-feed"
+import { useEffect } from 'react'
+import React, { useState } from 'react';
 
 export default function Home() {
+  const [selectedDescription, setSelectedDescription] = useState(null);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+
+  const topicsData = [
+    {
+      title: "Ansiedad",
+      description: "Si la ansiedad y los ataques de pánico dificultan tu día a día, en el espacio terapéutico exploraremos las raíces de estas emociones desde una perspectiva psicoanalítica, integrando herramientas de la psicología de la tercera ola. Buscaremos estrategias de manejo y bienestar emocional.",
+    },
+    {
+      title: "Depresión",
+      description: "Para quienes atraviesan síntomas depresivos, ofrezco un espacio de exploración profunda desde la orientación psicoanalítica, combinando herramientas de la tercera ola de la psicología. Esto nos permitirá comprender y abordar las causas subyacentes y promover la recuperación.",
+    },
+    {
+      title: "Relaciones",
+      description: "Si buscas mejorar tus relaciones interpersonales, en terapia exploraremos los patrones que influyen en tus vínculos desde una perspectiva psicoanalítica. A través de estas herramientas, trabajaremos juntos para construir relaciones más saludables y significativas.",
+    },
+    {
+      title: "Desarrollo Personal",
+      description: "Para desarrollar una autoestima saludable, te acompaño en un proceso de autoconocimiento profundo desde la orientación psicoanalítica. Exploraremos tu mundo interno con estas herramientas para observar tu pasado y presente con autenticidad, fortaleciendo tu bienestar emocional.",
+    },
+    {
+      title: "Estrés",
+      description: "Si el estrés te abruma, en terapia te brindaré herramientas y técnicas de manejo basadas en la orientación psicoanalítica y la psicología de la tercera ola. Juntos exploraremos las causas del estrés y encontraremos caminos hacia una vida más plena y equilibrada.",
+    },
+  ];
+
+  const handleTitleClick = (description) => {
+    setSelectedDescription(description);
+    setIsPopupVisible(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupVisible(false);
+    setSelectedDescription(null);
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-semibold text-primary">Evelyn Oszurkiewicz</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl font-semibold text-primary">Evelyn Oszurkiewicz</h1>
+          <div className=""> {/* Nuevo div para contener la licenciatura */}
             <span className="text-sm text-muted-foreground">Lic. en Psicología</span>
           </div>
+        </div>
           <div className="flex items-center gap-4">
-            <Link href="https://wa.me/+yourphonenumber" target="_blank" rel="noopener noreferrer">
+            <Link href="https://wa.me/+543489683697" target="_blank" rel="noopener noreferrer">
               <Button variant="ghost" size="icon" className="text-primary hover:text-primary/80 hover:bg-primary/10">
-                <Send className="h-5 w-5" />
+                <div style={{ width: '20px', height: '20px', position: 'relative' }}>
+                  <Image src="/images/whatsapp.png" alt="WhatsApp" fill style={{ objectFit: 'contain' }} />
+                </div>
                 <span className="sr-only">WhatsApp</span>
               </Button>
             </Link>
             <Link href="https://www.instagram.com/psi.evelyn.o/" target="_blank" rel="noopener noreferrer">
               <Button variant="ghost" size="icon" className="text-primary hover:text-primary/80 hover:bg-primary/10">
-                <Instagram className="h-5 w-5" />
+                <div style={{ width: '20px', height: '20px', position: 'relative' }}>
+                  <Image src="/images/instagram.png" alt="Instagram" fill style={{ objectFit: 'contain' }} />
+                </div>
                 <span className="sr-only">Instagram</span>
               </Button>
             </Link>
@@ -49,17 +95,23 @@ export default function Home() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     href="#booking"
-                    className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1"
+                    className="inline-flex flex-col items-center justify-center rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1"
                   >
-                    Reservar Turno
+                    <span>Consultar disponibilidad</span>
+                    <span style={{ fontSize: '0.8em', color: 'white' }}>
+                      (vía WhatsApp)
+                    </span>
                   </Link>
                   <Link
-                    href="https://wa.me/+yourphonenumber"
+                    href="https://wa.me/+543489683697"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-10 items-center justify-center rounded-md border border-primary/30 bg-background px-8 text-sm font-medium text-primary shadow-sm transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-1"
+                    className="inline-flex flex-col items-center justify-center rounded-md border border-primary/30 bg-background px-8 py-2 text-sm font-medium text-primary shadow-sm transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-1"
                   >
-                    Contactar por WhatsApp
+                    <span>Contactar por WhatsApp</span>
+                    <span style={{ fontSize: '0.8em', color: 'gray' }}>
+                      (otras consultas)
+                    </span>
                   </Link>
                 </div>
               </div>
@@ -77,25 +129,20 @@ export default function Home() {
           </div>
         </section>
 
-        {/* About Me Section */}
-        <section id="about" className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div className="mx-auto max-w-3xl space-y-6 text-center">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Sobre mí</h2>
-              <div className="mx-auto h-1 w-20 rounded-full bg-primary/60"></div>
-              <p className="text-muted-foreground md:text-lg">
-                Soy Evelyn Oszurkiewicz, psicóloga especializada en terapia cognitivo-conductual con amplia experiencia
-                en el acompañamiento terapéutico. Mi enfoque se centra en crear un espacio seguro donde puedas explorar
-                tus emociones y desarrollar herramientas para enfrentar los desafíos de la vida cotidiana.
-              </p>
-              <p className="text-muted-foreground md:text-lg">
-                Creo firmemente en un abordaje personalizado, adaptando las técnicas terapéuticas a las necesidades
-                específicas de cada persona. Mi objetivo es acompañarte en tu proceso de autoconocimiento y crecimiento
-                personal, brindándote las herramientas necesarias para mejorar tu bienestar emocional.
-              </p>
+          {/* About Me Section */}
+          <section id="about" className="w-full py-12 md:py-24 lg:py-32">
+            <div className="container px-4 md:px-6">
+              <div className="mx-auto max-w-3xl space-y-6 text-center">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Sobre mí</h2>
+                <div className="mx-auto h-1 w-20 rounded-full bg-primary/60"></div>
+                <p className="text-muted-foreground md:text-lg" style={{ whiteSpace: 'pre-line' }}>
+                ¡Bienvenido/a! Soy Evelyn, psicóloga clínica con más de diez años de experiencia. 
+                  {"\n"}Además de mi práctica, soy mamá y disfruto de actividades creativas como la lectura, la pintura y la cerámica. {"\n"}Mi enfoque terapéutico combina la exploración profunda del psicoanálisis con herramientas prácticas de la psicología de la tercera ola, como ACT y mindfulness, para ayudarte a comprender las raíces de tus emociones y pensamientos.{"\n"} En terapia, te ofrezco un espacio seguro para explorar tu mundo interior, identificar patrones y adquirir las herramientas necesarias para observar tu vida con mayor autenticidad. {"\n"}Mi propósito es acompañarte en tu viaje de autodescubrimiento hacia una vida más plena y un bienestar emocional duradero.
+                </p>
+
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
         {/* Consultation Topics */}
         <section id="topics" className="w-full py-12 md:py-24 lg:py-32 bg-secondary/10">
@@ -105,26 +152,61 @@ export default function Home() {
               <div className="mx-auto h-1 w-20 rounded-full bg-primary/60"></div>
             </div>
             <div className="mx-auto mt-12 grid max-w-5xl gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {[
-                { title: "Ansiedad", description: "Manejo de la ansiedad y ataques de pánico" },
-                { title: "Depresión", description: "Tratamiento de síntomas depresivos" },
-                { title: "Relaciones", description: "Mejora de relaciones interpersonales" },
-                { title: "Autoestima", description: "Desarrollo de una autoestima saludable" },
-                { title: "Estrés", description: "Técnicas para el manejo del estrés" },
-                { title: "Duelo", description: "Acompañamiento en procesos de duelo" },
-              ].map((topic, index) => (
-                <Card key={index} className="transition-all hover:shadow-md border-primary/20">
+              {topicsData.map((topic, index) => (
+                <Card key={index} className="transition-all hover:shadow-md border-primary/20 cursor-pointer">
                   <CardContent className="p-6 text-center">
-                    <h3 className="text-xl font-bold text-primary">{topic.title}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">{topic.description}</p>
+                    <h3
+                      className="text-xl font-bold text-primary"
+                      onClick={() => handleTitleClick(topic.description)}
+                    >
+                      {topic.title}
+                    </h3>
+                    {/* La descripción ya no se muestra directamente aquí */}
                   </CardContent>
                 </Card>
               ))}
             </div>
+
+{/* Popup */}
+{isPopupVisible && selectedDescription && (
+        <div
+          className="fixed top-0 left-0 w-full h-full bg-black/50 z-50 flex items-center justify-center"
+          onClick={handleClosePopup} // Cerrar el popup al hacer clic fuera
+        >
+          <div
+            className="relative bg-white rounded-lg shadow-lg p-8 max-w-md"
+            onClick={(e) => e.stopPropagation()} // Evitar que el clic dentro del popup lo cierre
+            onTouchEnd={(e) => e.stopPropagation()} // Evitar que el toque dentro del popup lo cierre
+          >
+            <button
+              onClick={handleClosePopup}
+              onTouchEnd={handleClosePopup}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 11-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+            <h3 className="text-lg font-semibold text-primary mb-4">
+              {topicsData.find(topic => topic.description === selectedDescription)?.title}
+            </h3>
+            <p className="text-sm text-muted-foreground">{selectedDescription}</p>
+          </div>
+        </div>
+      )}
           </div>
         </section>
 
-        {/* Instagram Feed */}
+        {/* Instagram Feed*/ }
         <section id="instagram" className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="mx-auto max-w-3xl space-y-6 text-center">
@@ -146,7 +228,7 @@ export default function Home() {
             <div className="mx-auto max-w-3xl space-y-6 text-center">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Reserva de Turnos</h2>
               <div className="mx-auto h-1 w-20 rounded-full bg-primary/60"></div>
-              <p className="text-muted-foreground md:text-lg">Completa el formulario para solicitar un turno</p>
+              <p className="text-muted-foreground md:text-lg">Completa el formulario para consultar disponibilidad de turnos vía Whatsapp</p>
             </div>
             <div className="mx-auto mt-12 max-w-3xl">
               <BookingForm />
@@ -166,7 +248,7 @@ export default function Home() {
                 <AccordionItem value="item-1">
                   <AccordionTrigger className="text-primary">¿Cómo son las sesiones online?</AccordionTrigger>
                   <AccordionContent>
-                    Las sesiones online se realizan a través de videollamada en una plataforma segura. Recibirás un
+                    Las sesiones online las realizamos a través de videollamada en una plataforma segura. Recibirás un
                     enlace antes de tu cita y solo necesitas una conexión a internet estable y un espacio privado donde
                     te sientas cómodo/a para hablar.
                   </AccordionContent>
@@ -189,15 +271,14 @@ export default function Home() {
                     ¿Cómo puedo cancelar o reprogramar una cita?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Puedes cancelar o reprogramar tu cita con al menos 24 horas de anticipación contactándome
+                    Podés cancelar o reprogramar tu cita con al menos 24 horas de anticipación contactándome
                     directamente por WhatsApp.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-5">
                   <AccordionTrigger className="text-primary">¿Trabajas con obras sociales o prepagas?</AccordionTrigger>
                   <AccordionContent>
-                    Actualmente trabajo con algunas obras sociales y prepagas. Puedes consultarme directamente para
-                    verificar si tu cobertura está incluida.
+                  Para facilitar tu reintegro con obras sociales y prepagas, emito la factura correspondiente. Te recomiendo consultar con tu prestador para conocer los pasos a seguir.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
@@ -214,7 +295,7 @@ export default function Home() {
               <p className="text-muted-foreground md:text-lg">¿Tienes alguna pregunta? No dudes en contactarme</p>
               <div className="flex justify-center gap-4">
                 <Link
-                  href="https://wa.me/+yourphonenumber"
+                  href="https://wa.me/+3489683697"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1"
@@ -252,4 +333,3 @@ export default function Home() {
     </div>
   )
 }
-
