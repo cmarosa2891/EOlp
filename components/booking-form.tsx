@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -115,14 +115,14 @@ const availabilityMatrix = {
     "07:00": false,
     "08:00": false,
     "09:00": false,
-    "13:30": false,
-    "14:30": false,
-    "15:30": false,
-    "16:30": false,
-    "17:30": false,
-    "18:30": false,
-    "19:30": false,
-    "20:30": false,
+    "13:30": true,
+    "14:30": true,
+    "15:30": true,
+    "16:30": true,
+    "17:30": true,
+    "18:30": true,
+    "19:30": true,
+    "20:30": true,
     "21:30": false,
   },
 }
@@ -279,7 +279,7 @@ export default function BookingForm() {
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="online">Consulta Online</SelectItem>
-                      <SelectItem value="presencial" disabled>Consulta Presencial</SelectItem>
+                      <SelectItem value="presencial">Consulta Presencial</SelectItem>
                       <p className="text-xs text-muted-foreground">
                         (momentaneamente no disponible)
                       </p>
