@@ -11,7 +11,10 @@ export const metadata: Metadata = {
   title: "Evelyn Oszurkiewicz | Lic. en Psicología",
   description:
     "Licenciada en Psicología especializada en terapia cognitivo-conductual. Consultas online y presenciales.",
-    generator: 'v0.dev'
+    generator: 'v0.dev',
+        verification: {
+    google: "UFrqCgg_Q-9z_tz4xDFKpNSQO2HqGJCzFele5jgBjOw",
+  },
 }
 
 export default function RootLayout({
